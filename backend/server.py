@@ -800,6 +800,12 @@ async def get_aemet_alerts():
                 info_blocks = re.findall(r'<info>(.*?)</info>', alerts_text, re.DOTALL)
                 
                 for info in info_blocks:
+                    # Check language - only process Spanish
+                    language = re.search(r'<language>(.*?)</language>', info, re.DOTALL)
+                    lang_text = language.group(1) if language else ""
+                    if "en" in lang_text.lower() and "es" not in lang_text.lower():
+                        continue  # Skip English alerts
+                    
                     event = re.search(r'<event>(.*?)</event>', info, re.DOTALL)
                     headline = re.search(r'<headline>(.*?)</headline>', info, re.DOTALL)
                     description = re.search(r'<description>(.*?)</description>', info, re.DOTALL)
@@ -811,10 +817,20 @@ async def get_aemet_alerts():
                     area_text = area_desc.group(1) if area_desc else ""
                     headline_text = headline.group(1) if headline else ""
                     desc_text = description.group(1) if description else ""
+                    event_text = event.group(1) if event else ""
                     
                     # Clean encoding
-                    for txt in [area_text, headline_text, desc_text]:
-                        txt = txt.replace('Ã³', 'ó').replace('Ã±', 'ñ').replace('Ã¡', 'á').replace('Ã©', 'é').replace('Ãº', 'ú').replace('Ã­', 'í')
+                    def clean_encoding(txt):
+                        return txt.replace('Ã³', 'ó').replace('Ã±', 'ñ').replace('Ã¡', 'á').replace('Ã©', 'é').replace('Ãº', 'ú').replace('Ã­', 'í')
+                    
+                    area_text = clean_encoding(area_text)
+                    headline_text = clean_encoding(headline_text)
+                    desc_text = clean_encoding(desc_text)
+                    event_text = clean_encoding(event_text)
+                    
+                    # Skip English alerts by detecting English words
+                    if any(eng in headline_text.lower() or eng in event_text.lower() for eng in ["warning", "snow", "rain", "wind", "temperature"]):
+                        continue
                     
                     # Filter for Jaén/Cazorla/Segura zone
                     zone_keywords = ["Jaén", "Cazorla", "Segura", "Sierra de Cazorla", "interior de Andalucía oriental"]
@@ -822,7 +838,7 @@ async def get_aemet_alerts():
                     
                     if is_our_zone:
                         alert = {
-                            "event": event.group(1) if event else "",
+                            "event": event_text,
                             "headline": headline_text,
                             "description": desc_text,
                             "severity": severity.group(1) if severity else "Unknown",
