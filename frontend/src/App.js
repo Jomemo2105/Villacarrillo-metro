@@ -318,6 +318,30 @@ function App() {
     to: new Date()
   });
   const [activeTab, setActiveTab] = useState("temperature");
+  const [aemetAlerts, setAemetAlerts] = useState([]);
+  const [aemetForecast, setAemetForecast] = useState(null);
+  const [forecastMunicipio, setForecastMunicipio] = useState("");
+
+  // Fetch AEMET data
+  const fetchAemetData = useCallback(async () => {
+    try {
+      const [alertsRes, forecastRes] = await Promise.all([
+        axios.get(`${API}/aemet/alerts`),
+        axios.get(`${API}/aemet/forecast`)
+      ]);
+      
+      if (alertsRes.data.status === "success") {
+        setAemetAlerts(alertsRes.data.alerts || []);
+      }
+      
+      if (forecastRes.data.status === "success") {
+        setAemetForecast(forecastRes.data.forecast || []);
+        setForecastMunicipio(forecastRes.data.municipio || "Villacarrillo");
+      }
+    } catch (error) {
+      console.error("Error fetching AEMET data:", error);
+    }
+  }, []);
 
   // Fetch current weather
   const fetchCurrentWeather = useCallback(async () => {
