@@ -848,7 +848,7 @@ function App() {
 
         {/* Charts Section */}
         <section className="mb-10">
-          <h2 className="heading text-base mb-5 flex items-center gap-2" style={{color: 'var(--text-secondary)'}}>
+          <h2 className="heading text-base mb-5 flex items-center gap-2 text-slate-400">
             <span className="w-1 h-4 bg-violet-500 rounded-full"></span>
             Gráficos Históricos
           </h2>
