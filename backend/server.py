@@ -780,35 +780,56 @@ async def get_aemet_alerts():
             try:
                 import json
                 alerts_data = json.loads(alerts_text)
+                # Filter for Jaén/Cazorla/Segura
+                filtered = []
+                for a in (alerts_data if isinstance(alerts_data, list) else [alerts_data]):
+                    desc = str(a.get("description", "")) + str(a.get("headline", ""))
+                    if any(z in desc for z in ["Jaén", "Cazorla", "Segura", "Sierra de", "interior de Andalucía"]):
+                        filtered.append(a)
                 return {
                     "status": "success",
-                    "alerts": alerts_data if isinstance(alerts_data, list) else [alerts_data],
-                    "message": None
+                    "alerts": filtered[:5],
+                    "message": None if filtered else "No hay alertas activas para la zona"
                 }
             except:
                 # It's likely XML CAP format - extract basic info
                 import re
                 
                 alerts = []
-                # Extract event types and descriptions from XML
-                events = re.findall(r'<event>(.*?)</event>', alerts_text, re.DOTALL)
-                headlines = re.findall(r'<headline>(.*?)</headline>', alerts_text, re.DOTALL)
-                descriptions = re.findall(r'<description>(.*?)</description>', alerts_text, re.DOTALL)
-                severities = re.findall(r'<severity>(.*?)</severity>', alerts_text, re.DOTALL)
+                # Extract event types and descriptions from XML - look for <info> blocks
+                info_blocks = re.findall(r'<info>(.*?)</info>', alerts_text, re.DOTALL)
                 
-                for i in range(len(events)):
-                    # Clean up description
-                    desc = descriptions[i] if i < len(descriptions) else ""
-                    desc = desc.replace('Ã³', 'ó').replace('Ã±', 'ñ').replace('Ã¡', 'á').replace('Ã©', 'é').replace('Ãº', 'ú')
+                for info in info_blocks:
+                    event = re.search(r'<event>(.*?)</event>', info, re.DOTALL)
+                    headline = re.search(r'<headline>(.*?)</headline>', info, re.DOTALL)
+                    description = re.search(r'<description>(.*?)</description>', info, re.DOTALL)
+                    severity = re.search(r'<severity>(.*?)</severity>', info, re.DOTALL)
+                    area_desc = re.search(r'<areaDesc>(.*?)</areaDesc>', info, re.DOTALL)
+                    effective = re.search(r'<effective>(.*?)</effective>', info, re.DOTALL)
+                    expires = re.search(r'<expires>(.*?)</expires>', info, re.DOTALL)
                     
-                    alert = {
-                        "event": events[i] if i < len(events) else "",
-                        "headline": headlines[i] if i < len(headlines) else "",
-                        "description": desc,
-                        "severity": severities[i] if i < len(severities) else "Unknown"
-                    }
-                    # Filter for Jaén if possible
-                    if "Jaén" in alert.get("description", "") or "Jaén" in alert.get("headline", "") or not alerts:
+                    area_text = area_desc.group(1) if area_desc else ""
+                    headline_text = headline.group(1) if headline else ""
+                    desc_text = description.group(1) if description else ""
+                    
+                    # Clean encoding
+                    for txt in [area_text, headline_text, desc_text]:
+                        txt = txt.replace('Ã³', 'ó').replace('Ã±', 'ñ').replace('Ã¡', 'á').replace('Ã©', 'é').replace('Ãº', 'ú').replace('Ã­', 'í')
+                    
+                    # Filter for Jaén/Cazorla/Segura zone
+                    zone_keywords = ["Jaén", "Cazorla", "Segura", "Sierra de Cazorla", "interior de Andalucía oriental"]
+                    is_our_zone = any(kw.lower() in (area_text + headline_text + desc_text).lower() for kw in zone_keywords)
+                    
+                    if is_our_zone:
+                        alert = {
+                            "event": event.group(1) if event else "",
+                            "headline": headline_text,
+                            "description": desc_text,
+                            "severity": severity.group(1) if severity else "Unknown",
+                            "area": area_text,
+                            "effective": effective.group(1) if effective else "",
+                            "expires": expires.group(1) if expires else ""
+                        }
                         alerts.append(alert)
                 
                 return {
