@@ -1,0 +1,148 @@
+{
+  "identity": {
+    "name": "E1: The Anti-AI Designer",
+    "mission": "Create a Meteorological Command Center that feels like a sci-fi interface, not a generic weather app.",
+    "principles": [
+      "Fusion over Imitation: Mix Tactical Military UI with Scientific Data Visualization.",
+      "Emotion First: The user should feel like a commander monitoring a storm.",
+      "Content is King: Data is the hero. Legibility is paramount.",
+      "Zoom In: Focus on the metrics that matter (Wind Gusts, Pressure Drops).",
+      "Negative Space: Use dense grids but keep internal padding high for readability."
+    ]
+  },
+  "typography": {
+    "primary_font": "Barlow Condensed",
+    "secondary_font": "JetBrains Mono",
+    "usage": {
+      "headings": "font-barlow font-bold tracking-tight uppercase text-white",
+      "body": "font-mono text-slate-400",
+      "data_values": "font-mono font-bold text-white tracking-wider",
+      "labels": "font-barlow font-medium text-slate-500 uppercase tracking-[0.2em] text-xs"
+    },
+    "google_fonts_import": "https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+  },
+  "colors": {
+    "theme": "dark",
+    "palette": {
+      "background": {
+        "main": "#050505",
+        "card": "rgba(20, 20, 25, 0.6)",
+        "overlay": "rgba(0, 0, 0, 0.8)"
+      },
+      "text": {
+        "primary": "#FFFFFF",
+        "secondary": "#94A3B8",
+        "muted": "#475569"
+      },
+      "accents": {
+        "primary": "#3B82F6",
+        "secondary": "#F97316",
+        "success": "#10B981",
+        "warning": "#EAB308",
+        "danger": "#EF4444",
+        "info": "#06B6D4"
+      },
+      "chart_colors": [
+        "#3B82F6",
+        "#F97316",
+        "#10B981",
+        "#8B5CF6",
+        "#EC4899"
+      ]
+    },
+    "tailwind_config_extension": {
+      "colors": {
+        "obsidian": "#050505",
+        "charcoal": "#0F172A",
+        "neon-blue": "#3B82F6",
+        "neon-orange": "#F97316"
+      },
+      "fontFamily": {
+        "barlow": ["'Barlow Condensed'", "sans-serif"],
+        "mono": ["'JetBrains Mono'", "monospace"]
+      }
+    }
+  },
+  "layout": {
+    "grid_system": "Bento Grid Mode B (High Density)",
+    "container_style": "max-w-[1600px] mx-auto p-4 md:p-8",
+    "spacing": {
+      "section_gap": "gap-6",
+      "card_padding": "p-6",
+      "internal_gap": "gap-4"
+    },
+    "structure": {
+      "dashboard": "grid grid-cols-1 md:grid-cols-4 gap-4 auto-rows-[minmax(180px,auto)]",
+      "hero_metric": "col-span-1 md:col-span-2 row-span-2",
+      "standard_card": "col-span-1 row-span-1",
+      "wide_card": "col-span-1 md:col-span-2 row-span-1",
+      "tall_card": "col-span-1 row-span-2"
+    }
+  },
+  "components": {
+    "cards": {
+      "style": "glassmorphism",
+      "classes": "bg-zinc-900/40 backdrop-blur-xl border border-white/10 rounded-none shadow-none hover:border-white/20 transition-colors duration-300",
+      "header": "flex justify-between items-center mb-4 border-b border-white/5 pb-2"
+    },
+    "buttons": {
+      "primary": "bg-white text-black hover:bg-zinc-200 font-barlow uppercase tracking-wider font-bold rounded-none px-6 py-2",
+      "secondary": "bg-transparent border border-white/20 text-white hover:bg-white/10 font-barlow uppercase tracking-wider rounded-none px-6 py-2",
+      "icon": "p-2 hover:bg-white/10 rounded-none text-white transition-colors"
+    },
+    "inputs": {
+      "style": "tactical",
+      "classes": "bg-black/50 border-white/20 text-white placeholder:text-zinc-600 font-mono rounded-none focus:ring-1 focus:ring-white/50 focus:border-white/50"
+    },
+    "charts": {
+      "library": "Recharts",
+      "style": "minimalist",
+      "grid": "stroke-white/5",
+      "tooltip": "bg-black/90 border border-white/20 text-white font-mono text-xs p-2 shadow-xl rounded-none"
+    }
+  },
+  "visual_enhancers": {
+    "glassmorphism": "backdrop-blur-xl bg-black/40 border border-white/10",
+    "noise_texture": "url('https://grainy-gradients.vercel.app/noise.svg')",
+    "tracing_beam": "Use framer-motion to animate a border glow on active cards.",
+    "glow_effects": "drop-shadow-[0_0_15px_rgba(59,130,246,0.5)] for key metrics."
+  },
+  "media": {
+    "image_urls": {
+      "background_hero": "https://images.unsplash.com/photo-1767775938756-574384a2a16a?q=80&w=2000&auto=format&fit=crop",
+      "abstract_data": "https://images.pexels.com/photos/30596263/pexels-photo-30596263.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+    },
+    "icons": "Lucide React (Stroke width 1.5px)"
+  },
+  "accessibility": {
+    "contrast": "Ensure 4.5:1 for text. Use white text on dark backgrounds.",
+    "focus_states": "Visible white ring offset-2 ring-offset-black",
+    "reduced_motion": "Respect user settings for animations."
+  },
+  "instructions_to_main_agent": [
+    "1. INSTALL FONTS: Add the Google Fonts import to index.css immediately.",
+    "2. CONFIGURE TAILWIND: Update tailwind.config.js with the 'obsidian', 'neon-blue', etc. colors and font families.",
+    "3. GLOBAL STYLES: Apply 'bg-obsidian text-white font-mono' to the body in index.css.",
+    "4. COMPONENT OVERRIDES: When using Shadcn components, strip the 'rounded-md' classes. We want sharp, tactical edges (rounded-none or rounded-sm).",
+    "5. LAYOUT: Use the Bento Grid Mode B for the dashboard. Do not create a single column layout for desktop.",
+    "6. CHARTS: Use Recharts. Style the X/Y axis to be subtle (gray-700). Make the lines/bars neon colors.",
+    "7. EXPORT: Ensure the Excel export button is prominent but follows the 'secondary' button style.",
+    "8. DATA-TESTID: Add data-testid to all interactive elements."
+  ],
+  "UNIVERSAL_GUIDELINES_FOR_MAIN_AGENT": [
+    "Dark colors look good when used independently without gradients. DO NOT use dark colors as gradients.",
+    "Don't make generic centered layouts, simplistic gradients, and uniform styling.",
+    "Create depth through layered design elements with z-index hierarchy.",
+    "Use glass-morphism effects with backdrop filters (12-24px blur).",
+    "You MUST NOT apply universal transition. Eg: transition: all.",
+    "You MUST NOT center align the app container.",
+    "Always use modern button styles like pill-shaped, or sharp button with interaction animations.",
+    "NEVER: use AI assistant Emoji characters.",
+    "Every interaction needs micro-animations.",
+    "Use 2-3x more spacing than feels comfortable.",
+    "Subtle grain textures, noise overlays, custom cursors, selection states, and loading animations.",
+    "Prioritize using pre-existing components from src/components/ui when applicable.",
+    "Components MUST use named exports.",
+    "Use sonner for toasts."
+  ]
+}
