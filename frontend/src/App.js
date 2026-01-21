@@ -811,7 +811,7 @@ function App() {
 
         {/* AEMET Alerts */}
         <section className="mb-10">
-          <AemetAlerts alerts={aemetAlerts} />
+          <AemetAlerts alerts={aemetAlerts} lastUpdate={lastAemetUpdate} />
         </section>
 
         {/* AEMET Forecast */}
@@ -824,7 +824,7 @@ function App() {
 
         {/* Charts Section */}
         <section className="mb-10">
-          <h2 className="heading text-base mb-5 text-slate-400 flex items-center gap-2">
+          <h2 className="heading text-base mb-5 flex items-center gap-2" style={{color: 'var(--text-secondary)'}}>
             <span className="w-1 h-4 bg-violet-500 rounded-full"></span>
             Gráficos Históricos
           </h2>
