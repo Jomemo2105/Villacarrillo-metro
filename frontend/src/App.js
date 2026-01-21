@@ -806,10 +806,10 @@ function App() {
           {/* Period quick select buttons */}
           <div className="flex flex-wrap gap-2 mb-4">
             <Button
-              onClick={() => setDateRange({ from: startOfDay(new Date()), to: new Date() })}
+              onClick={() => setDateRange({ from: startOfDay(new Date()), to: endOfDay(new Date()) })}
               className={`rounded-lg px-4 py-2 text-sm transition-colors duration-200 ${
                 dateRange.from?.toDateString() === startOfDay(new Date()).toDateString() && 
-                dateRange.to?.toDateString() === new Date().toDateString()
+                dateRange.to?.toDateString() === endOfDay(new Date()).toDateString()
                   ? "bg-emerald-500 text-white"
                   : "bg-white/5 border border-white/10 text-white hover:bg-white/10"
               }`}
@@ -821,7 +821,8 @@ function App() {
             <Button
               onClick={() => setDateRange({ from: subDays(new Date(), 1), to: new Date() })}
               className={`rounded-lg px-4 py-2 text-sm transition-colors duration-200 ${
-                dateRange.from?.toDateString() === subDays(new Date(), 1).toDateString()
+                dateRange.from?.toDateString() === subDays(new Date(), 1).toDateString() &&
+                dateRange.to?.toDateString() === new Date().toDateString()
                   ? "bg-emerald-500 text-white"
                   : "bg-white/5 border border-white/10 text-white hover:bg-white/10"
               }`}
