@@ -283,17 +283,17 @@ async def get_weather_history(
         raise HTTPException(status_code=400, detail="Date range cannot exceed 31 days")
     
     all_observations = []
-    current = start
+    current = start - timedelta(days=1)  # Start one day earlier to catch timezone differences
+    end_extended = end + timedelta(days=1)  # End one day later
     
-    while current <= end:
+    while current <= end_extended:
         date_str = current.strftime("%Y%m%d")
         
-        # Create date range strings for comparison (handle timezone differences)
-        # Use the date at 00:00 UTC and next day 00:00 UTC
+        # Create date range strings for comparison
         day_start = current.strftime("%Y-%m-%d")
         next_day = (current + timedelta(days=1)).strftime("%Y-%m-%d")
         
-        # First check database - use string comparison which works across timezones
+        # Check database
         cached = await db.observations.find(
             {
                 "timestamp": {
@@ -320,15 +320,34 @@ async def get_weather_history(
         
         current += timedelta(days=1)
     
+    # Filter to only include data within the requested date range (accounting for timezone)
+    # Convert start/end to string format for comparison
+    start_filter = start.strftime("%Y-%m-%d")
+    end_filter = (end + timedelta(days=1)).strftime("%Y-%m-%d")
+    
+    filtered_observations = [
+        obs for obs in all_observations
+        if obs.get("timestamp", "")[:10] >= start_filter[:10] or 
+           obs.get("timestamp", "")[11:13] >= "22"  # Include late night UTC which is early morning local
+    ]
+    
+    # Remove duplicates based on id
+    seen_ids = set()
+    unique_observations = []
+    for obs in all_observations:
+        if obs.get("id") not in seen_ids:
+            seen_ids.add(obs.get("id"))
+            unique_observations.append(obs)
+    
     # Sort by timestamp
-    all_observations.sort(key=lambda x: x.get("timestamp", ""))
+    unique_observations.sort(key=lambda x: x.get("timestamp", ""))
     
     return {
         "status": "success",
-        "count": len(all_observations),
+        "count": len(unique_observations),
         "start_date": start_date,
         "end_date": end_date,
-        "data": all_observations
+        "data": unique_observations
     }
 
 @api_router.get("/weather/last24h")
