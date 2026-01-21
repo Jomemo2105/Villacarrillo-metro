@@ -741,12 +741,19 @@ async def get_aemet_alerts():
             
             alerts_response = await http_client.get(alerts_url, timeout=15.0)
             
-            # Parse XML alerts or return raw
-            alerts_text = alerts_response.text
+            # Parse XML alerts or return raw - handle encoding
+            try:
+                alerts_text = alerts_response.content.decode('utf-8')
+            except:
+                alerts_text = alerts_response.content.decode('latin-1')
+            
+            # Fix common encoding issues
+            alerts_text = alerts_text.replace('Ã³', 'ó').replace('Ã±', 'ñ').replace('Ã¡', 'á').replace('Ã©', 'é').replace('Ãº', 'ú').replace('Ã', 'í')
             
             # Try to parse as JSON first
             try:
-                alerts_data = alerts_response.json()
+                import json
+                alerts_data = json.loads(alerts_text)
                 return {
                     "status": "success",
                     "alerts": alerts_data if isinstance(alerts_data, list) else [alerts_data],
@@ -764,10 +771,14 @@ async def get_aemet_alerts():
                 severities = re.findall(r'<severity>(.*?)</severity>', alerts_text, re.DOTALL)
                 
                 for i in range(len(events)):
+                    # Clean up description
+                    desc = descriptions[i] if i < len(descriptions) else ""
+                    desc = desc.replace('Ã³', 'ó').replace('Ã±', 'ñ').replace('Ã¡', 'á').replace('Ã©', 'é').replace('Ãº', 'ú')
+                    
                     alert = {
                         "event": events[i] if i < len(events) else "",
                         "headline": headlines[i] if i < len(headlines) else "",
-                        "description": descriptions[i] if i < len(descriptions) else "",
+                        "description": desc,
                         "severity": severities[i] if i < len(severities) else "Unknown"
                     }
                     # Filter for Jaén if possible
