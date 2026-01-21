@@ -18,13 +18,19 @@ import {
   Navigation,
   TrendingUp,
   TrendingDown,
-  Clock,
   AlertTriangle,
   CloudSnow,
   Cloud,
   CloudSun,
   Cloudy,
-  MapPin
+  MapPin,
+  Snowflake,
+  CloudLightning,
+  Waves,
+  ThermometerSun,
+  Info,
+  CheckCircle,
+  Video
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -49,8 +55,9 @@ import {
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
-// Auto-refresh interval (1 minute)
-const REFRESH_INTERVAL = 60000;
+// Auto-refresh intervals
+const WEATHER_REFRESH_INTERVAL = 60000; // 1 minute for weather
+const AEMET_REFRESH_INTERVAL = 600000; // 10 minutes for AEMET data
 
 // Helper to format date for API
 const formatDateForApi = (date) => format(date, "yyyyMMdd");
