@@ -524,21 +524,21 @@ function App() {
               </TabsTrigger>
               <TabsTrigger
                 value="wind"
-                className="font-barlow uppercase tracking-wider rounded-none data-[state=active]:bg-neon-blue data-[state=active]:text-white"
+                className="rounded-lg px-4 py-2 text-sm data-[state=active]:bg-emerald-500 data-[state=active]:text-white transition-colors duration-200"
                 data-testid="tab-wind"
               >
                 Viento
               </TabsTrigger>
               <TabsTrigger
                 value="pressure"
-                className="font-barlow uppercase tracking-wider rounded-none data-[state=active]:bg-neon-blue data-[state=active]:text-white"
+                className="rounded-lg px-4 py-2 text-sm data-[state=active]:bg-emerald-500 data-[state=active]:text-white transition-colors duration-200"
                 data-testid="tab-pressure"
               >
                 Presión
               </TabsTrigger>
               <TabsTrigger
                 value="precipitation"
-                className="font-barlow uppercase tracking-wider rounded-none data-[state=active]:bg-neon-blue data-[state=active]:text-white"
+                className="rounded-lg px-4 py-2 text-sm data-[state=active]:bg-emerald-500 data-[state=active]:text-white transition-colors duration-200"
                 data-testid="tab-precipitation"
               >
                 Precipitación
