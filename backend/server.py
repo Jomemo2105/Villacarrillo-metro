@@ -288,12 +288,17 @@ async def get_weather_history(
     while current <= end:
         date_str = current.strftime("%Y%m%d")
         
-        # First check database
+        # Create date range strings for comparison (handle timezone differences)
+        # Use the date at 00:00 UTC and next day 00:00 UTC
+        day_start = current.strftime("%Y-%m-%d")
+        next_day = (current + timedelta(days=1)).strftime("%Y-%m-%d")
+        
+        # First check database - use string comparison which works across timezones
         cached = await db.observations.find(
             {
                 "timestamp": {
-                    "$gte": current.isoformat(),
-                    "$lt": (current + timedelta(days=1)).isoformat()
+                    "$gte": f"{day_start}T00:00:00",
+                    "$lt": f"{next_day}T00:00:00"
                 }
             },
             {"_id": 0}
