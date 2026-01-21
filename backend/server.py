@@ -161,7 +161,6 @@ async def fetch_history_from_wu(date_str: str) -> Optional[Dict[str, Any]]:
 
 def parse_wu_observation(obs: Dict[str, Any]) -> WeatherObservation:
     """Parse Weather Underground observation into our model"""
-    metric = obs.get("metric", {})
     imperial = obs.get("imperial", {})
     
     # Parse timestamp
@@ -174,28 +173,53 @@ def parse_wu_observation(obs: Dict[str, Any]) -> WeatherObservation:
     except:
         timestamp = datetime.now(timezone.utc)
     
+    # Convert imperial to metric with full decimal precision
+    def f_to_c(f):
+        """Convert Fahrenheit to Celsius with decimals"""
+        if f is None:
+            return None
+        return round((f - 32) * 5 / 9, 1)
+    
+    def mph_to_kph(mph):
+        """Convert mph to km/h with decimals"""
+        if mph is None:
+            return None
+        return round(mph * 1.60934, 1)
+    
+    def in_to_mm(inches):
+        """Convert inches to mm with decimals"""
+        if inches is None:
+            return None
+        return round(inches * 25.4, 1)
+    
+    def inhg_to_mb(inhg):
+        """Convert inHg to millibars with decimals"""
+        if inhg is None:
+            return None
+        return round(inhg * 33.8639, 1)
+    
     return WeatherObservation(
         station_id=WU_STATION_ID,
         timestamp=timestamp,
-        temp_c=metric.get("temp"),
+        temp_c=f_to_c(imperial.get("temp")),
         temp_f=imperial.get("temp"),
         humidity=obs.get("humidity"),
-        dewpoint_c=metric.get("dewpt"),
+        dewpoint_c=f_to_c(imperial.get("dewpt")),
         dewpoint_f=imperial.get("dewpt"),
-        heat_index_c=metric.get("heatIndex"),
+        heat_index_c=f_to_c(imperial.get("heatIndex")),
         heat_index_f=imperial.get("heatIndex"),
-        wind_chill_c=metric.get("windChill"),
+        wind_chill_c=f_to_c(imperial.get("windChill")),
         wind_chill_f=imperial.get("windChill"),
-        wind_speed_kph=metric.get("windSpeed"),
+        wind_speed_kph=mph_to_kph(imperial.get("windSpeed")),
         wind_speed_mph=imperial.get("windSpeed"),
-        wind_gust_kph=metric.get("windGust"),
+        wind_gust_kph=mph_to_kph(imperial.get("windGust")),
         wind_gust_mph=imperial.get("windGust"),
         wind_dir=obs.get("winddir"),
-        pressure_mb=metric.get("pressure"),
+        pressure_mb=inhg_to_mb(imperial.get("pressure")),
         pressure_in=imperial.get("pressure"),
-        precip_rate_mm=metric.get("precipRate"),
+        precip_rate_mm=in_to_mm(imperial.get("precipRate")),
         precip_rate_in=imperial.get("precipRate"),
-        precip_total_mm=metric.get("precipTotal"),
+        precip_total_mm=in_to_mm(imperial.get("precipTotal")),
         precip_total_in=imperial.get("precipTotal"),
         uv=obs.get("uv"),
         solar_radiation=obs.get("solarRadiation")
