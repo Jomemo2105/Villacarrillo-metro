@@ -124,8 +124,9 @@ async def fetch_current_from_wu() -> Optional[Dict[str, Any]]:
     params = {
         "stationId": WU_STATION_ID,
         "format": "json",
-        "units": "m",
-        "apiKey": WU_API_KEY
+        "units": "e",  # Use imperial for more decimal precision
+        "apiKey": WU_API_KEY,
+        "numericPrecision": "decimal"
     }
     
     async with httpx.AsyncClient() as http_client:
@@ -143,9 +144,10 @@ async def fetch_history_from_wu(date_str: str) -> Optional[Dict[str, Any]]:
     params = {
         "stationId": WU_STATION_ID,
         "format": "json",
-        "units": "m",
+        "units": "e",  # Use imperial for more decimal precision
         "apiKey": WU_API_KEY,
-        "date": date_str  # Format: YYYYMMDD
+        "date": date_str,  # Format: YYYYMMDD
+        "numericPrecision": "decimal"
     }
     
     async with httpx.AsyncClient() as http_client:
