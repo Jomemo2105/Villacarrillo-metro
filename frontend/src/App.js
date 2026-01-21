@@ -310,44 +310,52 @@ function App() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-obsidian flex items-center justify-center">
+      <div className="min-h-screen bg-[#080c14] flex items-center justify-center">
         <div className="text-center">
-          <RefreshCw className="w-12 h-12 text-neon-blue animate-spin mx-auto mb-4" />
-          <p className="font-barlow text-xl text-white uppercase tracking-wider">Cargando datos meteorológicos...</p>
+          <div className="relative">
+            <div className="w-16 h-16 border-4 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin mx-auto"></div>
+            <Activity className="w-6 h-6 text-emerald-400 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+          </div>
+          <p className="font-outfit text-lg text-white mt-6">Cargando datos meteorológicos...</p>
+          <p className="text-slate-500 text-sm mt-2">Estación Meteomedrano</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-obsidian" data-testid="weather-dashboard">
-      <Toaster position="top-right" theme="dark" />
+    <div className="min-h-screen bg-[#080c14]" data-testid="weather-dashboard">
+      <Toaster position="top-right" theme="dark" richColors />
 
       {/* Header */}
-      <header className="border-b border-white/10 bg-black/40 backdrop-blur-xl sticky top-0 z-50">
-        <div className="max-w-[1600px] mx-auto px-4 md:px-8 py-4">
+      <header className="border-b border-white/5 bg-[#080c14]/80 backdrop-blur-2xl sticky top-0 z-50">
+        <div className="max-w-[1600px] mx-auto px-4 md:px-8 py-5">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div>
-              <h1 className="heading text-2xl md:text-3xl flex items-center gap-3">
-                <Activity className="w-8 h-8 text-neon-blue glow-blue" />
-                Centro Meteorológico Villacarrillo
-              </h1>
-              <p className="text-slate-500 text-sm font-mono mt-1">
-                Estación Meteomedrano
-              </p>
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-emerald-500/10 rounded-xl border border-emerald-500/20 animate-pulse-glow">
+                <Activity className="w-7 h-7 text-emerald-400" />
+              </div>
+              <div>
+                <h1 className="heading text-xl md:text-2xl">
+                  Centro Meteorológico Villacarrillo
+                </h1>
+                <p className="text-slate-500 text-xs mt-0.5">
+                  Estación Meteomedrano
+                </p>
+              </div>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               {lastUpdate && (
-                <div className="flex items-center gap-2 text-slate-500 text-xs font-mono">
-                  <Clock className="w-4 h-4" />
-                  <span>Actualizado: {format(lastUpdate, "HH:mm:ss", { locale: es })}</span>
+                <div className="flex items-center gap-2 text-slate-500 text-xs bg-white/5 px-3 py-2 rounded-lg">
+                  <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+                  <span>{format(lastUpdate, "HH:mm:ss", { locale: es })}</span>
                 </div>
               )}
               <Button
                 onClick={handleRefresh}
                 disabled={refreshing}
-                className="bg-transparent border border-white/20 text-white hover:bg-white/10 font-barlow uppercase tracking-wider rounded-none px-4 py-2"
+                className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/20 hover:text-emerald-300 rounded-lg px-4 py-2 transition-colors duration-200"
                 data-testid="refresh-button"
               >
                 <RefreshCw className={`w-4 h-4 mr-2 ${refreshing ? "animate-spin" : ""}`} />
@@ -361,9 +369,12 @@ function App() {
       {/* Main Content */}
       <main className="max-w-[1600px] mx-auto p-4 md:p-8">
         {/* Current Conditions Grid */}
-        <section className="mb-8">
-          <h2 className="heading text-lg mb-4 text-slate-400">Condiciones Actuales</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4" data-testid="current-conditions">
+        <section className="mb-10">
+          <h2 className="heading text-base mb-5 text-slate-400 flex items-center gap-2">
+            <span className="w-1 h-4 bg-emerald-500 rounded-full"></span>
+            Condiciones Actuales
+          </h2>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4" data-testid="current-conditions">
             <MetricCard
               icon={Thermometer}
               label="Temperatura"
