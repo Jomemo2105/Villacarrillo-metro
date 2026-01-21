@@ -796,8 +796,64 @@ function App() {
           <AemetForecast forecast={aemetForecast} municipio={forecastMunicipio} />
         </section>
 
-        {/* Controls - Fecha, Exportar, Observaciones */}
+        {/* Controls - Período, Fecha, Exportar, Observaciones */}
         <section className="mb-10">
+          <h2 className="heading text-base mb-5 flex items-center gap-2 text-slate-400">
+            <span className="w-1 h-4 bg-emerald-500 rounded-full"></span>
+            Datos Históricos
+          </h2>
+          
+          {/* Period quick select buttons */}
+          <div className="flex flex-wrap gap-2 mb-4">
+            <Button
+              onClick={() => setDateRange({ from: startOfDay(new Date()), to: new Date() })}
+              className={`rounded-lg px-4 py-2 text-sm transition-colors duration-200 ${
+                dateRange.from?.toDateString() === startOfDay(new Date()).toDateString() && 
+                dateRange.to?.toDateString() === new Date().toDateString()
+                  ? "bg-emerald-500 text-white"
+                  : "bg-white/5 border border-white/10 text-white hover:bg-white/10"
+              }`}
+              data-testid="period-today"
+            >
+              <Clock className="w-4 h-4 mr-2" />
+              Hoy
+            </Button>
+            <Button
+              onClick={() => setDateRange({ from: subDays(new Date(), 1), to: new Date() })}
+              className={`rounded-lg px-4 py-2 text-sm transition-colors duration-200 ${
+                dateRange.from?.toDateString() === subDays(new Date(), 1).toDateString()
+                  ? "bg-emerald-500 text-white"
+                  : "bg-white/5 border border-white/10 text-white hover:bg-white/10"
+              }`}
+              data-testid="period-24h"
+            >
+              24 horas
+            </Button>
+            <Button
+              onClick={() => setDateRange({ from: subWeeks(new Date(), 1), to: new Date() })}
+              className={`rounded-lg px-4 py-2 text-sm transition-colors duration-200 ${
+                dateRange.from?.toDateString() === subWeeks(new Date(), 1).toDateString()
+                  ? "bg-emerald-500 text-white"
+                  : "bg-white/5 border border-white/10 text-white hover:bg-white/10"
+              }`}
+              data-testid="period-1week"
+            >
+              1 semana
+            </Button>
+            <Button
+              onClick={() => setDateRange({ from: subMonths(new Date(), 1), to: new Date() })}
+              className={`rounded-lg px-4 py-2 text-sm transition-colors duration-200 ${
+                dateRange.from?.toDateString() === subMonths(new Date(), 1).toDateString()
+                  ? "bg-emerald-500 text-white"
+                  : "bg-white/5 border border-white/10 text-white hover:bg-white/10"
+              }`}
+              data-testid="period-1month"
+            >
+              1 mes
+            </Button>
+          </div>
+          
+          {/* Date picker and export */}
           <div className="flex flex-col md:flex-row md:items-center gap-4">
             <Popover>
               <PopoverTrigger asChild>
