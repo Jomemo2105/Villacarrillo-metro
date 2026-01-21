@@ -8,10 +8,12 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        obsidian: "#050505",
+        obsidian: "#080c14",
         charcoal: "#0F172A",
         "neon-blue": "#3B82F6",
         "neon-orange": "#F97316",
+        "neon-green": "#22C55E",
+        "neon-purple": "#8B5CF6",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -47,8 +49,8 @@ module.exports = {
         }
       },
       fontFamily: {
-        barlow: ["'Barlow Condensed'", "sans-serif"],
-        mono: ["'JetBrains Mono'", "monospace"]
+        outfit: ["'Outfit'", "sans-serif"],
+        mono: ["'Space Mono'", "monospace"]
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -65,14 +67,19 @@ module.exports = {
           to: { height: "0" }
         },
         "pulse-glow": {
-          "0%, 100%": { boxShadow: "0 0 20px rgba(59, 130, 246, 0.3)" },
-          "50%": { boxShadow: "0 0 40px rgba(59, 130, 246, 0.6)" }
+          "0%, 100%": { boxShadow: "0 0 20px rgba(34, 197, 94, 0.3)" },
+          "50%": { boxShadow: "0 0 40px rgba(34, 197, 94, 0.6)" }
+        },
+        "float": {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-5px)" }
         }
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        "pulse-glow": "pulse-glow 2s ease-in-out infinite"
+        "pulse-glow": "pulse-glow 2s ease-in-out infinite",
+        "float": "float 3s ease-in-out infinite"
       }
     }
   },
