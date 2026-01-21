@@ -542,13 +542,21 @@ function App() {
 
   // Auto-refresh weather (1 minute)
   useEffect(() => {
-    const interval = setInterval(() => {
+    const weatherInterval = setInterval(() => {
       fetchCurrentWeather();
-      fetchAemetData();
-    }, REFRESH_INTERVAL);
+    }, WEATHER_REFRESH_INTERVAL);
 
-    return () => clearInterval(interval);
-  }, [fetchCurrentWeather, fetchAemetData]);
+    return () => clearInterval(weatherInterval);
+  }, [fetchCurrentWeather]);
+
+  // Auto-refresh AEMET data (10 minutes)
+  useEffect(() => {
+    const aemetInterval = setInterval(() => {
+      fetchAemetData();
+    }, AEMET_REFRESH_INTERVAL);
+
+    return () => clearInterval(aemetInterval);
+  }, [fetchAemetData]);
 
   // Refresh handler
   const handleRefresh = async () => {
