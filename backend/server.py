@@ -378,17 +378,21 @@ async def get_weather_statistics(
 ):
     """Calculate weather statistics for a date range"""
     try:
-        start = datetime.strptime(start_date, "%Y%m%d").replace(tzinfo=timezone.utc)
-        end = datetime.strptime(end_date, "%Y%m%d").replace(hour=23, minute=59, second=59, tzinfo=timezone.utc)
+        start = datetime.strptime(start_date, "%Y%m%d")
+        end = datetime.strptime(end_date, "%Y%m%d")
     except ValueError:
         raise HTTPException(status_code=400, detail="Invalid date format. Use YYYYMMDD")
+    
+    # Use string comparison for timezone flexibility
+    start_str = start.strftime("%Y-%m-%d") + "T00:00:00"
+    end_str = (end + timedelta(days=1)).strftime("%Y-%m-%d") + "T00:00:00"
     
     pipeline = [
         {
             "$match": {
                 "timestamp": {
-                    "$gte": start.isoformat(),
-                    "$lte": end.isoformat()
+                    "$gte": start_str,
+                    "$lt": end_str
                 }
             }
         },
