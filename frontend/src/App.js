@@ -431,6 +431,7 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [lastUpdate, setLastUpdate] = useState(null);
+  const [lastAemetUpdate, setLastAemetUpdate] = useState(null);
   const [dateRange, setDateRange] = useState({
     from: subDays(new Date(), 1),
     to: new Date()
@@ -439,6 +440,26 @@ function App() {
   const [aemetAlerts, setAemetAlerts] = useState([]);
   const [aemetForecast, setAemetForecast] = useState(null);
   const [forecastMunicipio, setForecastMunicipio] = useState("");
+  const [isDarkMode, setIsDarkMode] = useState(true);
+
+  // Detect system color scheme
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    setIsDarkMode(mediaQuery.matches);
+    
+    const handler = (e) => setIsDarkMode(e.matches);
+    mediaQuery.addEventListener('change', handler);
+    return () => mediaQuery.removeEventListener('change', handler);
+  }, []);
+
+  // Apply dark/light class to document
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [isDarkMode]);
 
   // Fetch AEMET data
   const fetchAemetData = useCallback(async () => {
@@ -456,6 +477,8 @@ function App() {
         setAemetForecast(forecastRes.data.forecast || []);
         setForecastMunicipio(forecastRes.data.municipio || "Villacarrillo");
       }
+      
+      setLastAemetUpdate(new Date());
     } catch (error) {
       console.error("Error fetching AEMET data:", error);
     }
@@ -517,7 +540,7 @@ function App() {
     loadData();
   }, [fetchCurrentWeather, fetchHistory, fetchAemetData]);
 
-  // Auto-refresh
+  // Auto-refresh weather (1 minute)
   useEffect(() => {
     const interval = setInterval(() => {
       fetchCurrentWeather();
