@@ -277,7 +277,7 @@ const AemetAlerts = ({ alerts, lastUpdate }) => {
         {alerts.map((alert, index) => {
           const severityInfo = getSeverityInfo(alert.severity);
           
-          // Parse dates from alert
+          // Parse dates from alert - use onset (when event starts) not effective (when published)
           const formatAlertDate = (dateStr) => {
             if (!dateStr) return null;
             try {
@@ -288,7 +288,7 @@ const AemetAlerts = ({ alerts, lastUpdate }) => {
             }
           };
           
-          const effectiveDate = formatAlertDate(alert.effective);
+          const onsetDate = formatAlertDate(alert.onset);
           const expiresDate = formatAlertDate(alert.expires);
           
           return (
@@ -309,12 +309,12 @@ const AemetAlerts = ({ alerts, lastUpdate }) => {
                   </div>
                   
                   {/* Date info */}
-                  {(effectiveDate || expiresDate) && (
+                  {(onsetDate || expiresDate) && (
                     <div className="flex flex-wrap gap-4 mb-2 text-xs text-slate-400">
-                      {effectiveDate && (
+                      {onsetDate && (
                         <div className="flex items-center gap-1">
                           <Calendar className="w-3 h-3" />
-                          <span>Desde: {effectiveDate}</span>
+                          <span>Desde: {onsetDate}</span>
                         </div>
                       )}
                       {expiresDate && (
