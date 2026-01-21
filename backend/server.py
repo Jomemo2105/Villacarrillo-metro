@@ -28,6 +28,11 @@ WU_API_KEY = os.environ.get('WEATHER_UNDERGROUND_API_KEY', '')
 WU_STATION_ID = os.environ.get('WEATHER_UNDERGROUND_STATION_ID', '')
 WU_BASE_URL = "https://api.weather.com/v2/pws"
 
+# AEMET config
+AEMET_API_KEY = os.environ.get('AEMET_API_KEY', '')
+AEMET_MUNICIPIO = os.environ.get('AEMET_MUNICIPIO', '23091')  # Villacarrillo
+AEMET_BASE_URL = "https://opendata.aemet.es/opendata/api"
+
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
