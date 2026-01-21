@@ -128,42 +128,44 @@ const StatsSummary = ({ stats }) => {
 
   return (
     <div className="glass-card p-6" data-testid="stats-summary">
-      <h3 className="heading text-lg mb-4 flex items-center gap-2">
-        <Activity className="w-5 h-5 text-neon-blue" />
+      <h3 className="heading text-lg mb-6 flex items-center gap-3">
+        <div className="p-2 bg-emerald-500/10 rounded-lg border border-emerald-500/20">
+          <Activity className="w-5 h-5 text-emerald-400" />
+        </div>
         Resumen Estadístico
       </h3>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-        <div>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div className="space-y-1">
           <div className="metric-label">Temp Máx</div>
-          <div className="metric-value text-xl text-red-400">{stats.temp_max_c?.toFixed(1) ?? "—"}°C</div>
+          <div className="metric-value text-2xl text-rose-400">{stats.temp_max_c?.toFixed(1) ?? "—"}°C</div>
         </div>
-        <div>
+        <div className="space-y-1">
           <div className="metric-label">Temp Mín</div>
-          <div className="metric-value text-xl text-blue-400">{stats.temp_min_c?.toFixed(1) ?? "—"}°C</div>
+          <div className="metric-value text-2xl text-blue-400">{stats.temp_min_c?.toFixed(1) ?? "—"}°C</div>
         </div>
-        <div>
+        <div className="space-y-1">
           <div className="metric-label">Humedad Media</div>
-          <div className="metric-value text-xl text-cyan-400">{stats.humidity_avg?.toFixed(1) ?? "—"}%</div>
+          <div className="metric-value text-2xl text-cyan-400">{stats.humidity_avg?.toFixed(1) ?? "—"}%</div>
         </div>
-        <div>
+        <div className="space-y-1">
           <div className="metric-label">Ráfaga Máx</div>
-          <div className="metric-value text-xl text-orange-400">{stats.wind_gust_max_kph?.toFixed(1) ?? "—"} km/h</div>
+          <div className="metric-value text-2xl text-orange-400">{stats.wind_gust_max_kph?.toFixed(1) ?? "—"} km/h</div>
         </div>
-        <div>
+        <div className="space-y-1">
           <div className="metric-label">Viento Medio</div>
-          <div className="metric-value text-xl text-emerald-400">{stats.wind_avg_kph?.toFixed(1) ?? "—"} km/h</div>
+          <div className="metric-value text-2xl text-emerald-400">{stats.wind_avg_kph?.toFixed(1) ?? "—"} km/h</div>
         </div>
-        <div>
+        <div className="space-y-1">
           <div className="metric-label">Presión Media</div>
-          <div className="metric-value text-xl text-purple-400">{stats.pressure_avg_mb?.toFixed(1) ?? "—"} mb</div>
+          <div className="metric-value text-2xl text-violet-400">{stats.pressure_avg_mb?.toFixed(1) ?? "—"} mb</div>
         </div>
-        <div>
+        <div className="space-y-1">
           <div className="metric-label">Precipitación</div>
-          <div className="metric-value text-xl text-blue-300">{stats.precip_total_mm?.toFixed(1) ?? 0} mm</div>
+          <div className="metric-value text-2xl text-blue-300">{stats.precip_total_mm?.toFixed(1) ?? 0} mm</div>
         </div>
-        <div>
+        <div className="space-y-1">
           <div className="metric-label">Observaciones</div>
-          <div className="metric-value text-xl text-white">{stats.observation_count ?? 0}</div>
+          <div className="metric-value text-2xl text-white">{stats.observation_count ?? 0}</div>
         </div>
       </div>
     </div>
