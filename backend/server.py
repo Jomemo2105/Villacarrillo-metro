@@ -811,7 +811,8 @@ async def get_aemet_alerts():
                     description = re.search(r'<description>(.*?)</description>', info, re.DOTALL)
                     severity = re.search(r'<severity>(.*?)</severity>', info, re.DOTALL)
                     area_desc = re.search(r'<areaDesc>(.*?)</areaDesc>', info, re.DOTALL)
-                    effective = re.search(r'<effective>(.*?)</effective>', info, re.DOTALL)
+                    # Use onset for when the weather event starts, not effective (publication time)
+                    onset = re.search(r'<onset>(.*?)</onset>', info, re.DOTALL)
                     expires = re.search(r'<expires>(.*?)</expires>', info, re.DOTALL)
                     
                     area_text = area_desc.group(1) if area_desc else ""
@@ -843,8 +844,8 @@ async def get_aemet_alerts():
                             "description": desc_text,
                             "severity": severity.group(1) if severity else "Unknown",
                             "area": area_text,
-                            "effective": effective.group(1) if effective else "",
-                            "expires": expires.group(1) if expires else ""
+                            "onset": onset.group(1) if onset else "",  # When weather event starts
+                            "expires": expires.group(1) if expires else ""  # When it ends
                         }
                         alerts.append(alert)
                 
