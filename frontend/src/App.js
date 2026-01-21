@@ -389,8 +389,12 @@ const WebcamSection = () => {
       </h3>
       <div className="webcam-container">
         <iframe
+          width="720"
+          height="435"
           src="https://www.myearthcam.com/meteomedrano?embed"
           title="Webcam Meteomedrano"
+          frameBorder="0"
+          scrolling="no"
           allowFullScreen
         />
       </div>
