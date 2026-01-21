@@ -454,15 +454,15 @@ function App() {
         </section>
 
         {/* Controls */}
-        <section className="mb-8">
+        <section className="mb-10">
           <div className="flex flex-col md:flex-row md:items-center gap-4">
             <Popover>
               <PopoverTrigger asChild>
                 <Button
-                  className="bg-transparent border border-white/20 text-white hover:bg-white/10 font-barlow uppercase tracking-wider rounded-none px-6 py-2 justify-start"
+                  className="bg-white/5 border border-white/10 text-white hover:bg-white/10 rounded-lg px-5 py-2.5 justify-start transition-colors duration-200"
                   data-testid="date-picker-button"
                 >
-                  <Calendar className="w-4 h-4 mr-2" />
+                  <Calendar className="w-4 h-4 mr-2 text-emerald-400" />
                   {dateRange.from && dateRange.to ? (
                     <>
                       {format(dateRange.from, "dd/MM/yyyy")} - {format(dateRange.to, "dd/MM/yyyy")}
@@ -472,14 +472,14 @@ function App() {
                   )}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-auto p-0 bg-zinc-900 border-white/20" align="start">
+              <PopoverContent className="w-auto p-0 bg-[#0c1018] border-white/10 rounded-xl" align="start">
                 <CalendarComponent
                   mode="range"
                   selected={dateRange}
                   onSelect={handleDateSelect}
                   numberOfMonths={2}
                   locale={es}
-                  className="bg-zinc-900 text-white"
+                  className="bg-[#0c1018] text-white rounded-xl"
                   data-testid="calendar"
                 />
               </PopoverContent>
@@ -487,36 +487,37 @@ function App() {
 
             <Button
               onClick={handleExport}
-              className="bg-white text-black hover:bg-zinc-200 font-barlow uppercase tracking-wider font-bold rounded-none px-6 py-2"
+              className="bg-emerald-500 text-white hover:bg-emerald-600 font-medium rounded-lg px-5 py-2.5 transition-colors duration-200"
               data-testid="export-button"
             >
               <Download className="w-4 h-4 mr-2" />
               Exportar Excel
             </Button>
 
-            <div className="text-sm text-slate-500 font-mono ml-auto">
+            <div className="text-sm text-slate-500 ml-auto flex items-center gap-2">
+              <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
               {historyData.length} observaciones
             </div>
           </div>
         </section>
 
         {/* Statistics Summary */}
-        {statistics && <section className="mb-8"><StatsSummary stats={statistics} /></section>}
+        {statistics && <section className="mb-10"><StatsSummary stats={statistics} /></section>}
 
         {/* Charts Section */}
-        <section className="mb-8">
+        <section className="mb-10">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="bg-zinc-900/60 border border-white/10 rounded-none p-1 mb-6">
+            <TabsList className="bg-white/5 border border-white/5 rounded-xl p-1.5 mb-6 flex-wrap h-auto gap-1">
               <TabsTrigger
                 value="temperature"
-                className="font-barlow uppercase tracking-wider rounded-none data-[state=active]:bg-neon-blue data-[state=active]:text-white"
+                className="rounded-lg px-4 py-2 text-sm data-[state=active]:bg-emerald-500 data-[state=active]:text-white transition-colors duration-200"
                 data-testid="tab-temperature"
               >
                 Temperatura
               </TabsTrigger>
               <TabsTrigger
                 value="humidity"
-                className="font-barlow uppercase tracking-wider rounded-none data-[state=active]:bg-neon-blue data-[state=active]:text-white"
+                className="rounded-lg px-4 py-2 text-sm data-[state=active]:bg-emerald-500 data-[state=active]:text-white transition-colors duration-200"
                 data-testid="tab-humidity"
               >
                 Humedad
