@@ -1100,9 +1100,14 @@ function App() {
           </Tabs>
         </section>
 
+        {/* Webcam Section */}
+        <section className="mb-10">
+          <WebcamSection />
+        </section>
+
         {/* Footer */}
-        <footer className="border-t border-white/10 pt-6 mt-8">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 text-sm text-slate-500 font-mono">
+        <footer className="border-t pt-6 mt-8" style={{borderColor: 'var(--border-color)'}}>
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 text-sm font-mono" style={{color: 'var(--text-secondary)'}}>
             <div>
               Datos de Weather Underground PWS · Meteomedrano
             </div>
