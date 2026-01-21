@@ -76,33 +76,47 @@ const CustomTooltip = ({ active, payload, label }) => {
 };
 
 // Metric Card Component
-const MetricCard = ({ icon: Icon, label, value, unit, trend, color = "blue", large = false }) => {
+const MetricCard = ({ icon: Icon, label, value, unit, trend, color = "green", large = false }) => {
   const colorClasses = {
-    blue: "text-neon-blue",
-    orange: "text-neon-orange",
-    green: "text-emerald-500",
-    yellow: "text-yellow-500",
-    purple: "text-purple-500",
-    cyan: "text-cyan-500"
+    blue: "text-blue-400",
+    orange: "text-orange-400",
+    green: "text-emerald-400",
+    yellow: "text-amber-400",
+    purple: "text-violet-400",
+    cyan: "text-cyan-400",
+    red: "text-rose-400"
+  };
+
+  const bgClasses = {
+    blue: "bg-blue-500/10 border-blue-500/20",
+    orange: "bg-orange-500/10 border-orange-500/20",
+    green: "bg-emerald-500/10 border-emerald-500/20",
+    yellow: "bg-amber-500/10 border-amber-500/20",
+    purple: "bg-violet-500/10 border-violet-500/20",
+    cyan: "bg-cyan-500/10 border-cyan-500/20",
+    red: "bg-rose-500/10 border-rose-500/20"
   };
 
   return (
-    <div className={`glass-card p-6 ${large ? "col-span-2 row-span-2" : ""}`} data-testid={`metric-${label.toLowerCase().replace(/\s/g, "-")}`}>
-      <div className="flex items-start justify-between mb-4">
-        <div className={`p-2 ${colorClasses[color]} bg-white/5`}>
+    <div 
+      className={`glass-card p-5 group transition-all duration-300 ${large ? "col-span-2 row-span-2" : ""}`} 
+      data-testid={`metric-${label.toLowerCase().replace(/\s/g, "-")}`}
+    >
+      <div className="flex items-start justify-between mb-3">
+        <div className={`p-2.5 rounded-lg border ${bgClasses[color]} ${colorClasses[color]} transition-transform duration-300 group-hover:scale-110`}>
           <Icon className="w-5 h-5" strokeWidth={1.5} />
         </div>
         {trend !== undefined && (
-          <div className={`flex items-center gap-1 text-xs ${trend >= 0 ? "text-emerald-500" : "text-red-500"}`}>
+          <div className={`flex items-center gap-1 text-xs px-2 py-1 rounded-full ${trend >= 0 ? "bg-emerald-500/20 text-emerald-400" : "bg-rose-500/20 text-rose-400"}`}>
             {trend >= 0 ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
             <span>{Math.abs(trend).toFixed(1)}</span>
           </div>
         )}
       </div>
-      <div className="metric-label mb-2">{label}</div>
+      <div className="metric-label mb-1">{label}</div>
       <div className={`metric-value ${large ? "text-5xl" : "text-3xl"} ${colorClasses[color]}`}>
         {value !== null && value !== undefined ? value : "—"}
-        {unit && <span className="text-lg text-slate-400 ml-1">{unit}</span>}
+        {unit && <span className="text-base text-slate-500 ml-1 font-normal">{unit}</span>}
       </div>
     </div>
   );
