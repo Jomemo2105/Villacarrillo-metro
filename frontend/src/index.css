@@ -6,39 +6,6 @@
 
 @layer base {
     :root {
-        /* Light mode colors */
-        --background: 210 20% 98%;
-        --foreground: 222 47% 11%;
-        --card: 0 0% 100%;
-        --card-foreground: 222 47% 11%;
-        --popover: 0 0% 100%;
-        --popover-foreground: 222 47% 11%;
-        --primary: 142 76% 36%;
-        --primary-foreground: 0 0% 100%;
-        --secondary: 262 83% 58%;
-        --secondary-foreground: 0 0% 100%;
-        --muted: 210 40% 96%;
-        --muted-foreground: 215 16% 47%;
-        --accent: 142 76% 36%;
-        --accent-foreground: 0 0% 100%;
-        --destructive: 0 84% 60%;
-        --destructive-foreground: 0 0% 98%;
-        --border: 214 32% 91%;
-        --input: 214 32% 91%;
-        --ring: 142 76% 36%;
-        --radius: 0.5rem;
-        
-        /* Custom light mode */
-        --bg-main: #f8fafc;
-        --bg-card: #ffffff;
-        --text-primary: #0f172a;
-        --text-secondary: #64748b;
-        --border-color: rgba(0, 0, 0, 0.08);
-        --glow-color: rgba(34, 197, 94, 0.2);
-    }
-    
-    .dark {
-        /* Dark mode colors */
         --background: 222 47% 5%;
         --foreground: 210 40% 98%;
         --card: 222 47% 8%;
@@ -58,14 +25,7 @@
         --border: 217 33% 17%;
         --input: 217 33% 17%;
         --ring: 142 76% 46%;
-        
-        /* Custom dark mode */
-        --bg-main: #080c14;
-        --bg-card: rgba(15, 23, 42, 0.6);
-        --text-primary: #ffffff;
-        --text-secondary: #94a3b8;
-        --border-color: rgba(255, 255, 255, 0.08);
-        --glow-color: rgba(34, 197, 94, 0.3);
+        --radius: 0.5rem;
     }
 }
 
@@ -79,59 +39,47 @@
     }
     
     body {
-        @apply antialiased transition-colors duration-300;
+        @apply bg-[#080c14] text-white antialiased;
         font-family: 'Space Mono', monospace;
-        background-color: var(--bg-main);
-        color: var(--text-primary);
-    }
-    
-    .dark body {
         background-image: 
             radial-gradient(ellipse 80% 50% at 50% -20%, rgba(34, 197, 94, 0.15), transparent),
             radial-gradient(ellipse 60% 40% at 100% 100%, rgba(139, 92, 246, 0.1), transparent);
     }
     
     ::selection {
-        @apply bg-emerald-500/30;
+        @apply bg-emerald-500/30 text-white;
     }
 }
 
 @layer components {
     .glass-card {
-        background: var(--bg-card);
-        backdrop-filter: blur(20px);
-        border: 1px solid var(--border-color);
-        @apply rounded-xl transition-all duration-300;
-        box-shadow: 0 4px 20px -5px rgba(0,0,0,0.1);
-    }
-    
-    .dark .glass-card {
+        @apply bg-gradient-to-br from-slate-900/80 to-slate-800/40 backdrop-blur-2xl border border-white/5 rounded-xl;
         box-shadow: 
             0 0 0 1px rgba(255,255,255,0.05) inset,
             0 20px 40px -20px rgba(0,0,0,0.5);
     }
     
     .glass-card:hover {
-        border-color: rgba(34, 197, 94, 0.3);
-        box-shadow: 0 8px 30px -10px var(--glow-color);
+        @apply border-emerald-500/30;
+        box-shadow: 
+            0 0 0 1px rgba(34, 197, 94, 0.2) inset,
+            0 20px 40px -20px rgba(0,0,0,0.5),
+            0 0 30px -10px rgba(34, 197, 94, 0.3);
     }
     
     .metric-value {
         font-family: 'Outfit', sans-serif;
-        @apply font-semibold tracking-tight;
-        color: var(--text-primary);
+        @apply font-semibold text-white tracking-tight;
     }
     
     .metric-label {
         font-family: 'Space Mono', monospace;
-        @apply uppercase tracking-widest text-[10px] font-normal;
-        color: var(--text-secondary);
+        @apply text-slate-500 uppercase tracking-widest text-[10px] font-normal;
     }
     
     .heading {
         font-family: 'Outfit', sans-serif;
-        @apply font-semibold tracking-tight;
-        color: var(--text-primary);
+        @apply font-semibold tracking-tight text-white;
     }
     
     .glow-green {
@@ -140,35 +88,6 @@
     
     .glow-purple {
         filter: drop-shadow(0 0 20px rgba(139, 92, 246, 0.6));
-    }
-    
-    /* Alert severity styles */
-    .alert-extreme {
-        @apply bg-red-500/10 border-red-500/30 text-red-600;
-    }
-    .dark .alert-extreme {
-        @apply bg-red-500/20 text-red-400;
-    }
-    
-    .alert-severe {
-        @apply bg-orange-500/10 border-orange-500/30 text-orange-600;
-    }
-    .dark .alert-severe {
-        @apply bg-orange-500/20 text-orange-400;
-    }
-    
-    .alert-moderate {
-        @apply bg-amber-500/10 border-amber-500/30 text-amber-600;
-    }
-    .dark .alert-moderate {
-        @apply bg-amber-500/20 text-amber-400;
-    }
-    
-    .alert-minor {
-        @apply bg-yellow-500/10 border-yellow-500/30 text-yellow-600;
-    }
-    .dark .alert-minor {
-        @apply bg-yellow-500/20 text-yellow-400;
     }
 }
 
@@ -225,7 +144,7 @@
 /* Recharts custom styles */
 .recharts-cartesian-grid-horizontal line,
 .recharts-cartesian-grid-vertical line {
-    stroke: var(--border-color);
+    stroke: rgba(255, 255, 255, 0.03);
 }
 
 .recharts-tooltip-wrapper {
@@ -233,22 +152,22 @@
 }
 
 .recharts-default-tooltip {
-    background: var(--bg-card) !important;
-    border: 1px solid var(--border-color) !important;
+    background: rgba(8, 12, 20, 0.95) !important;
+    border: 1px solid rgba(34, 197, 94, 0.3) !important;
     border-radius: 12px !important;
     padding: 12px 16px !important;
-    box-shadow: 0 20px 40px -20px rgba(0,0,0,0.3) !important;
+    box-shadow: 0 20px 40px -20px rgba(0,0,0,0.5) !important;
 }
 
 .recharts-tooltip-label {
-    color: var(--text-primary) !important;
+    color: white !important;
     font-family: 'Space Mono', monospace !important;
     font-size: 11px !important;
     margin-bottom: 8px !important;
 }
 
 .recharts-tooltip-item {
-    color: var(--text-primary) !important;
+    color: white !important;
     font-family: 'Space Mono', monospace !important;
     font-size: 11px !important;
 }
@@ -257,18 +176,14 @@
 .webcam-container {
     position: relative;
     width: 100%;
-    padding-bottom: 56.25%; /* 16:9 aspect ratio */
-    height: 0;
-    overflow: hidden;
-    border-radius: 12px;
+    max-width: 720px;
+    margin: 0 auto;
 }
 
 .webcam-container iframe {
-    position: absolute;
-    top: 0;
-    left: 0;
     width: 100%;
-    height: 100%;
+    height: auto;
+    aspect-ratio: 720 / 435;
     border: none;
     border-radius: 12px;
 }
