@@ -43,8 +43,8 @@ import {
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
-// Auto-refresh interval (5 minutes)
-const REFRESH_INTERVAL = 300000;
+// Auto-refresh interval (1 minute)
+const REFRESH_INTERVAL = 60000;
 
 // Helper to format date for API
 const formatDateForApi = (date) => format(date, "yyyyMMdd");
@@ -314,10 +314,10 @@ function App() {
             <div>
               <h1 className="heading text-2xl md:text-3xl flex items-center gap-3">
                 <Activity className="w-8 h-8 text-neon-blue glow-blue" />
-                Centro Meteorológico
+                Centro Meteorológico Villacarrillo
               </h1>
               <p className="text-slate-500 text-sm font-mono mt-1">
-                Estación: {currentWeather?.station_id || "IVILLA1220"}
+                Estación Meteomedrano
               </p>
             </div>
 
@@ -777,10 +777,11 @@ function App() {
         <footer className="border-t border-white/10 pt-6 mt-8">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 text-sm text-slate-500 font-mono">
             <div>
-              Datos de Weather Underground PWS
+              Datos de Weather Underground PWS · Meteomedrano
             </div>
-            <div>
-              Auto-actualización cada 5 minutos
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+              Auto-actualización cada minuto
             </div>
           </div>
         </footer>
