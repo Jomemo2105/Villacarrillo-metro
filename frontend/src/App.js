@@ -547,10 +547,12 @@ function App() {
 
             {/* Temperature Chart */}
             <TabsContent value="temperature" className="mt-0">
-              <Card className="glass-card border-white/10 rounded-none" data-testid="chart-temperature">
+              <Card className="glass-card border-white/5 rounded-xl" data-testid="chart-temperature">
                 <CardHeader className="border-b border-white/5 pb-4">
-                  <CardTitle className="heading text-lg flex items-center gap-2">
-                    <Thermometer className="w-5 h-5 text-neon-orange" />
+                  <CardTitle className="heading text-base flex items-center gap-3">
+                    <div className="p-2 bg-orange-500/10 rounded-lg border border-orange-500/20">
+                      <Thermometer className="w-4 h-4 text-orange-400" />
+                    </div>
                     Temperatura
                   </CardTitle>
                 </CardHeader>
@@ -560,41 +562,16 @@ function App() {
                       <AreaChart data={historyData}>
                         <defs>
                           <linearGradient id="tempGradient" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#F97316" stopOpacity={0.3} />
-                            <stop offset="95%" stopColor="#F97316" stopOpacity={0} />
+                            <stop offset="5%" stopColor="#f97316" stopOpacity={0.3} />
+                            <stop offset="95%" stopColor="#f97316" stopOpacity={0} />
                           </linearGradient>
                         </defs>
-                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                        <XAxis
-                          dataKey="datetime"
-                          stroke="#475569"
-                          tick={{ fill: "#94A3B8", fontSize: 10 }}
-                          tickLine={false}
-                        />
-                        <YAxis
-                          stroke="#475569"
-                          tick={{ fill: "#94A3B8", fontSize: 10 }}
-                          tickLine={false}
-                          domain={["auto", "auto"]}
-                        />
+                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" />
+                        <XAxis dataKey="datetime" stroke="#334155" tick={{ fill: "#64748b", fontSize: 10 }} tickLine={false} />
+                        <YAxis stroke="#334155" tick={{ fill: "#64748b", fontSize: 10 }} tickLine={false} domain={["auto", "auto"]} />
                         <Tooltip content={<CustomTooltip />} />
-                        <Area
-                          type="monotone"
-                          dataKey="temp_c"
-                          name="Temperatura (°C)"
-                          stroke="#F97316"
-                          strokeWidth={2}
-                          fill="url(#tempGradient)"
-                        />
-                        <Line
-                          type="monotone"
-                          dataKey="dewpoint_c"
-                          name="Punto Rocío (°C)"
-                          stroke="#06B6D4"
-                          strokeWidth={1}
-                          dot={false}
-                          strokeDasharray="5 5"
-                        />
+                        <Area type="monotone" dataKey="temp_c" name="Temperatura (°C)" stroke="#f97316" strokeWidth={2} fill="url(#tempGradient)" />
+                        <Line type="monotone" dataKey="dewpoint_c" name="Punto Rocío (°C)" stroke="#06b6d4" strokeWidth={1} dot={false} strokeDasharray="5 5" />
                       </AreaChart>
                     </ResponsiveContainer>
                   </div>
