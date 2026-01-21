@@ -276,8 +276,23 @@ const AemetAlerts = ({ alerts, lastUpdate }) => {
       <div className="space-y-4">
         {alerts.map((alert, index) => {
           const severityInfo = getSeverityInfo(alert.severity);
+          
+          // Parse dates from alert
+          const formatAlertDate = (dateStr) => {
+            if (!dateStr) return null;
+            try {
+              const date = new Date(dateStr);
+              return format(date, "EEEE d 'de' MMMM, HH:mm", { locale: es });
+            } catch {
+              return dateStr;
+            }
+          };
+          
+          const effectiveDate = formatAlertDate(alert.effective);
+          const expiresDate = formatAlertDate(alert.expires);
+          
           return (
-            <div key={index} className={`p-4 rounded-xl border-2 ${severityInfo.class} transition-all duration-300`}>
+            <div key={index} className={`p-4 rounded-xl border-2 bg-amber-500/10 border-amber-500/30 text-amber-400 transition-all duration-300`}>
               <div className="flex items-start gap-4">
                 {/* Icon */}
                 <div className={`p-3 rounded-xl ${severityInfo.bgClass}/20`}>
@@ -286,15 +301,40 @@ const AemetAlerts = ({ alerts, lastUpdate }) => {
                 
                 {/* Content */}
                 <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-2">
+                  <div className="flex flex-wrap items-center gap-2 mb-2">
                     <span className={`px-2 py-0.5 text-xs font-bold rounded ${severityInfo.bgClass} text-white`}>
                       {severityInfo.label}
                     </span>
                     <span className="font-semibold">{alert.event || "Aviso meteorológico"}</span>
                   </div>
                   
+                  {/* Date info */}
+                  {(effectiveDate || expiresDate) && (
+                    <div className="flex flex-wrap gap-4 mb-2 text-xs text-slate-400">
+                      {effectiveDate && (
+                        <div className="flex items-center gap-1">
+                          <Calendar className="w-3 h-3" />
+                          <span>Desde: {effectiveDate}</span>
+                        </div>
+                      )}
+                      {expiresDate && (
+                        <div className="flex items-center gap-1">
+                          <Calendar className="w-3 h-3" />
+                          <span>Hasta: {expiresDate}</span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  
                   {alert.headline && (
                     <div className="font-medium mb-2 text-sm">{alert.headline}</div>
+                  )}
+                  
+                  {alert.area && (
+                    <div className="text-xs text-slate-400 mb-2 flex items-center gap-1">
+                      <MapPin className="w-3 h-3" />
+                      {alert.area}
+                    </div>
                   )}
                   
                   {alert.description && (
