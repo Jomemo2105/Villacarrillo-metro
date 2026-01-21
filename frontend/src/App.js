@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import "@/App.css";
 import axios from "axios";
-import { format, subDays } from "date-fns";
+import { format, subDays, subWeeks, subMonths, startOfDay, endOfDay } from "date-fns";
 import { es } from "date-fns/locale";
 import { Toaster, toast } from "sonner";
 import {
@@ -30,7 +30,8 @@ import {
   ThermometerSun,
   Info,
   CheckCircle,
-  Video
+  Video,
+  Clock
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
