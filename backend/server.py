@@ -555,6 +555,231 @@ async def get_station_info():
         "database": os.environ.get('DB_NAME', 'unknown')
     }
 
+# AEMET API Functions
+async def fetch_aemet_data(endpoint: str) -> Optional[Dict[str, Any]]:
+    """Fetch data from AEMET API (two-step process)"""
+    headers = {
+        "api_key": AEMET_API_KEY,
+        "Accept": "application/json"
+    }
+    
+    async with httpx.AsyncClient() as http_client:
+        try:
+            # Step 1: Get the data URL
+            response = await http_client.get(
+                f"{AEMET_BASE_URL}{endpoint}",
+                headers=headers,
+                timeout=15.0
+            )
+            response.raise_for_status()
+            data = response.json()
+            
+            if data.get("estado") != 200 or "datos" not in data:
+                logger.error(f"AEMET API error: {data}")
+                return None
+            
+            # Step 2: Fetch actual data from the URL
+            data_url = data["datos"]
+            data_response = await http_client.get(data_url, timeout=15.0)
+            data_response.raise_for_status()
+            return data_response.json()
+            
+        except httpx.HTTPError as e:
+            logger.error(f"Error fetching AEMET data: {e}")
+            return None
+        except Exception as e:
+            logger.error(f"Error parsing AEMET data: {e}")
+            return None
+
+@api_router.get("/aemet/forecast")
+async def get_aemet_forecast():
+    """Get AEMET weather forecast for Villacarrillo"""
+    data = await fetch_aemet_data(f"/prediccion/especifica/municipio/diaria/{AEMET_MUNICIPIO}")
+    
+    if not data or len(data) == 0:
+        return {
+            "status": "error",
+            "message": "No se pudo obtener el pronóstico de AEMET",
+            "forecast": None
+        }
+    
+    try:
+        prediction = data[0]
+        municipio = prediction.get("nombre", "Villacarrillo")
+        provincia = prediction.get("provincia", "Jaén")
+        elaborado = prediction.get("elaborado", "")
+        
+        # Parse forecast days
+        forecast_days = []
+        prediccion = prediction.get("prediccion", {})
+        dias = prediccion.get("dia", [])
+        
+        for dia in dias[:5]:  # Next 5 days
+            fecha = dia.get("fecha", "")
+            
+            # Get temperature
+            temp_data = dia.get("temperatura", {})
+            temp_max = temp_data.get("maxima") if isinstance(temp_data, dict) else None
+            temp_min = temp_data.get("minima") if isinstance(temp_data, dict) else None
+            
+            # Get sky condition
+            estado_cielo = dia.get("estadoCielo", [])
+            cielo_desc = ""
+            if estado_cielo and len(estado_cielo) > 0:
+                # Get midday condition
+                for ec in estado_cielo:
+                    if ec.get("periodo") in ["12-24", "00-24"] or not ec.get("periodo"):
+                        cielo_desc = ec.get("descripcion", "")
+                        break
+                if not cielo_desc and estado_cielo:
+                    cielo_desc = estado_cielo[0].get("descripcion", "")
+            
+            # Get precipitation probability
+            prob_precip = dia.get("probPrecipitacion", [])
+            max_prob = 0
+            for pp in prob_precip:
+                if isinstance(pp, dict):
+                    val = pp.get("value") or pp.get("valor", 0)
+                    if val and int(val) > max_prob:
+                        max_prob = int(val)
+            
+            # Get wind
+            viento = dia.get("viento", [])
+            wind_speed = None
+            wind_dir = None
+            for v in viento:
+                if isinstance(v, dict) and v.get("velocidad"):
+                    wind_speed = v.get("velocidad")
+                    wind_dir = v.get("direccion")
+                    break
+            
+            # Get humidity
+            humedad = dia.get("humedadRelativa", {})
+            hum_max = humedad.get("maxima") if isinstance(humedad, dict) else None
+            hum_min = humedad.get("minima") if isinstance(humedad, dict) else None
+            
+            forecast_days.append({
+                "fecha": fecha,
+                "temp_max": temp_max,
+                "temp_min": temp_min,
+                "cielo": cielo_desc,
+                "prob_precipitacion": max_prob,
+                "viento_velocidad": wind_speed,
+                "viento_direccion": wind_dir,
+                "humedad_max": hum_max,
+                "humedad_min": hum_min
+            })
+        
+        return {
+            "status": "success",
+            "municipio": municipio,
+            "provincia": provincia,
+            "elaborado": elaborado,
+            "forecast": forecast_days
+        }
+        
+    except Exception as e:
+        logger.error(f"Error parsing AEMET forecast: {e}")
+        return {
+            "status": "error",
+            "message": str(e),
+            "forecast": None
+        }
+
+@api_router.get("/aemet/alerts")
+async def get_aemet_alerts():
+    """Get AEMET weather alerts for Andalucía/Jaén"""
+    # Use CAP alerts for the region
+    headers = {
+        "api_key": AEMET_API_KEY,
+        "Accept": "application/json"
+    }
+    
+    async with httpx.AsyncClient() as http_client:
+        try:
+            # Get alerts for Andalucía (zone 61)
+            response = await http_client.get(
+                f"{AEMET_BASE_URL}/avisos_cap/ultimoelaborado/area/61",
+                headers=headers,
+                timeout=15.0
+            )
+            
+            if response.status_code == 404:
+                # No alerts
+                return {
+                    "status": "success",
+                    "alerts": [],
+                    "message": "No hay alertas activas"
+                }
+            
+            response.raise_for_status()
+            data = response.json()
+            
+            if data.get("estado") == 404 or "datos" not in data:
+                return {
+                    "status": "success",
+                    "alerts": [],
+                    "message": "No hay alertas activas"
+                }
+            
+            # Fetch actual alert data
+            alerts_url = data.get("datos")
+            if not alerts_url:
+                return {
+                    "status": "success",
+                    "alerts": [],
+                    "message": "No hay alertas activas"
+                }
+            
+            alerts_response = await http_client.get(alerts_url, timeout=15.0)
+            
+            # Parse XML alerts or return raw
+            alerts_text = alerts_response.text
+            
+            # Try to parse as JSON first
+            try:
+                alerts_data = alerts_response.json()
+                return {
+                    "status": "success",
+                    "alerts": alerts_data if isinstance(alerts_data, list) else [alerts_data],
+                    "message": None
+                }
+            except:
+                # It's likely XML CAP format - extract basic info
+                import re
+                
+                alerts = []
+                # Extract event types and descriptions from XML
+                events = re.findall(r'<event>(.*?)</event>', alerts_text, re.DOTALL)
+                headlines = re.findall(r'<headline>(.*?)</headline>', alerts_text, re.DOTALL)
+                descriptions = re.findall(r'<description>(.*?)</description>', alerts_text, re.DOTALL)
+                severities = re.findall(r'<severity>(.*?)</severity>', alerts_text, re.DOTALL)
+                
+                for i in range(len(events)):
+                    alert = {
+                        "event": events[i] if i < len(events) else "",
+                        "headline": headlines[i] if i < len(headlines) else "",
+                        "description": descriptions[i] if i < len(descriptions) else "",
+                        "severity": severities[i] if i < len(severities) else "Unknown"
+                    }
+                    # Filter for Jaén if possible
+                    if "Jaén" in alert.get("description", "") or "Jaén" in alert.get("headline", "") or not alerts:
+                        alerts.append(alert)
+                
+                return {
+                    "status": "success",
+                    "alerts": alerts[:5],  # Max 5 alerts
+                    "message": None if alerts else "No hay alertas activas para la zona"
+                }
+                
+        except httpx.HTTPError as e:
+            logger.error(f"Error fetching AEMET alerts: {e}")
+            return {
+                "status": "error",
+                "alerts": [],
+                "message": "Error al obtener alertas de AEMET"
+            }
+
 # Include the router in the main app
 app.include_router(api_router)
 
