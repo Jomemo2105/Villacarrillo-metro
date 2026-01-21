@@ -185,52 +185,137 @@ const StatsSummary = ({ stats }) => {
   );
 };
 
-// AEMET Alerts Component
-const AemetAlerts = ({ alerts }) => {
+// AEMET Alerts Component - Enhanced with icons and visual elements
+const AemetAlerts = ({ alerts, lastUpdate }) => {
+  // Get alert icon based on event type
+  const getAlertIcon = (event) => {
+    if (!event) return <AlertTriangle className="w-6 h-6" />;
+    const lower = event.toLowerCase();
+    if (lower.includes("nieve") || lower.includes("nevad")) return <Snowflake className="w-6 h-6" />;
+    if (lower.includes("lluvia") || lower.includes("precipitac")) return <CloudRain className="w-6 h-6" />;
+    if (lower.includes("tormenta")) return <CloudLightning className="w-6 h-6" />;
+    if (lower.includes("viento")) return <Wind className="w-6 h-6" />;
+    if (lower.includes("calor") || lower.includes("temperatura")) return <ThermometerSun className="w-6 h-6" />;
+    if (lower.includes("costero") || lower.includes("mar")) return <Waves className="w-6 h-6" />;
+    return <AlertTriangle className="w-6 h-6" />;
+  };
+
+  const getSeverityInfo = (severity) => {
+    switch (severity?.toLowerCase()) {
+      case "extreme": 
+        return { 
+          class: "alert-extreme", 
+          label: "EXTREMO",
+          bgClass: "bg-red-500",
+          icon: "🔴"
+        };
+      case "severe": 
+        return { 
+          class: "alert-severe", 
+          label: "SEVERO",
+          bgClass: "bg-orange-500",
+          icon: "🟠"
+        };
+      case "moderate": 
+        return { 
+          class: "alert-moderate", 
+          label: "MODERADO",
+          bgClass: "bg-amber-500",
+          icon: "🟡"
+        };
+      default: 
+        return { 
+          class: "alert-minor", 
+          label: "MENOR",
+          bgClass: "bg-yellow-400",
+          icon: "🟢"
+        };
+    }
+  };
+
   if (!alerts || alerts.length === 0) {
     return (
       <div className="glass-card p-6" data-testid="aemet-alerts">
         <h3 className="heading text-lg mb-4 flex items-center gap-3">
           <div className="p-2 bg-emerald-500/10 rounded-lg border border-emerald-500/20">
-            <AlertTriangle className="w-5 h-5 text-emerald-400" />
+            <CheckCircle className="w-5 h-5 text-emerald-500" />
           </div>
           Alertas AEMET
+          <span className="ml-auto text-xs text-slate-500 font-mono font-normal">Sierra de Cazorla y Segura</span>
         </h3>
-        <div className="flex items-center gap-3 text-slate-400">
-          <span className="w-2 h-2 bg-emerald-500 rounded-full"></span>
-          No hay alertas activas para la zona
+        <div className="flex flex-col md:flex-row md:items-center gap-4 p-4 bg-emerald-500/5 rounded-xl border border-emerald-500/10">
+          <div className="flex items-center gap-3">
+            <div className="w-3 h-3 bg-emerald-500 rounded-full animate-pulse"></div>
+            <span className="text-emerald-600 dark:text-emerald-400 font-medium">Sin alertas activas</span>
+          </div>
+          <div className="flex items-center gap-2 text-sm text-slate-500 md:ml-auto">
+            <Info className="w-4 h-4" />
+            <span>No hay avisos meteorológicos vigentes para la zona</span>
+          </div>
         </div>
+        {lastUpdate && (
+          <div className="mt-3 text-xs text-slate-500 flex items-center gap-1">
+            <RefreshCw className="w-3 h-3" />
+            Última comprobación: {format(lastUpdate, "HH:mm", { locale: es })}
+          </div>
+        )}
       </div>
     );
   }
 
-  const getSeverityColor = (severity) => {
-    switch (severity?.toLowerCase()) {
-      case "extreme": return "bg-red-500/20 border-red-500/30 text-red-400";
-      case "severe": return "bg-orange-500/20 border-orange-500/30 text-orange-400";
-      case "moderate": return "bg-yellow-500/20 border-yellow-500/30 text-yellow-400";
-      default: return "bg-blue-500/20 border-blue-500/30 text-blue-400";
-    }
-  };
-
   return (
     <div className="glass-card p-6" data-testid="aemet-alerts">
       <h3 className="heading text-lg mb-4 flex items-center gap-3">
-        <div className="p-2 bg-amber-500/10 rounded-lg border border-amber-500/20">
-          <AlertTriangle className="w-5 h-5 text-amber-400" />
+        <div className="p-2 bg-amber-500/10 rounded-lg border border-amber-500/20 animate-pulse-soft">
+          <AlertTriangle className="w-5 h-5 text-amber-500" />
         </div>
         Alertas AEMET
+        <span className="ml-auto text-xs text-slate-500 font-mono font-normal">Sierra de Cazorla y Segura</span>
       </h3>
-      <div className="space-y-3">
-        {alerts.map((alert, index) => (
-          <div key={index} className={`p-4 rounded-lg border ${getSeverityColor(alert.severity)}`}>
-            <div className="font-medium mb-1">{alert.event || alert.headline}</div>
-            {alert.description && (
-              <div className="text-sm opacity-80">{alert.description}</div>
-            )}
-          </div>
-        ))}
+      
+      <div className="space-y-4">
+        {alerts.map((alert, index) => {
+          const severityInfo = getSeverityInfo(alert.severity);
+          return (
+            <div key={index} className={`p-4 rounded-xl border-2 ${severityInfo.class} transition-all duration-300`}>
+              <div className="flex items-start gap-4">
+                {/* Icon */}
+                <div className={`p-3 rounded-xl ${severityInfo.bgClass}/20`}>
+                  {getAlertIcon(alert.event)}
+                </div>
+                
+                {/* Content */}
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className={`px-2 py-0.5 text-xs font-bold rounded ${severityInfo.bgClass} text-white`}>
+                      {severityInfo.label}
+                    </span>
+                    <span className="font-semibold">{alert.event || "Aviso meteorológico"}</span>
+                  </div>
+                  
+                  {alert.headline && (
+                    <div className="font-medium mb-2 text-sm">{alert.headline}</div>
+                  )}
+                  
+                  {alert.description && (
+                    <div className="text-sm opacity-80 leading-relaxed">
+                      <Info className="w-4 h-4 inline mr-1 opacity-60" />
+                      {alert.description}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+        })}
       </div>
+      
+      {lastUpdate && (
+        <div className="mt-4 pt-3 border-t border-white/5 text-xs text-slate-500 flex items-center gap-1">
+          <RefreshCw className="w-3 h-3" />
+          Actualizado: {format(lastUpdate, "HH:mm", { locale: es })} · Se actualiza cada 10 min
+        </div>
+      )}
     </div>
   );
 };
@@ -239,12 +324,38 @@ const AemetAlerts = ({ alerts }) => {
 const getWeatherIcon = (cielo) => {
   if (!cielo) return <Cloud className="w-8 h-8" />;
   const lower = cielo.toLowerCase();
-  if (lower.includes("nieve")) return <CloudSnow className="w-8 h-8 text-blue-300" />;
+  if (lower.includes("nieve")) return <Snowflake className="w-8 h-8 text-blue-300" />;
   if (lower.includes("lluvia")) return <CloudRain className="w-8 h-8 text-blue-400" />;
+  if (lower.includes("tormenta")) return <CloudLightning className="w-8 h-8 text-purple-400" />;
   if (lower.includes("cubierto")) return <Cloudy className="w-8 h-8 text-slate-400" />;
   if (lower.includes("nuboso")) return <Cloud className="w-8 h-8 text-slate-300" />;
   if (lower.includes("despejado")) return <Sun className="w-8 h-8 text-yellow-400" />;
   return <CloudSun className="w-8 h-8 text-slate-300" />;
+};
+
+// Webcam Component
+const WebcamSection = () => {
+  return (
+    <div className="glass-card p-6" data-testid="webcam-section">
+      <h3 className="heading text-lg mb-4 flex items-center gap-3">
+        <div className="p-2 bg-red-500/10 rounded-lg border border-red-500/20">
+          <Video className="w-5 h-5 text-red-500" />
+        </div>
+        Webcam en Directo
+        <span className="ml-auto flex items-center gap-2 text-xs text-red-500">
+          <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+          LIVE
+        </span>
+      </h3>
+      <div className="webcam-container">
+        <iframe
+          src="https://www.myearthcam.com/meteomedrano?embed"
+          title="Webcam Meteomedrano"
+          allowFullScreen
+        />
+      </div>
+    </div>
+  );
 };
 
 // AEMET Forecast Component
