@@ -785,7 +785,17 @@ function App() {
           </div>
         </section>
 
-        {/* Controls */}
+        {/* AEMET Alerts */}
+        <section className="mb-10">
+          <AemetAlerts alerts={aemetAlerts} lastUpdate={lastAemetUpdate} />
+        </section>
+
+        {/* AEMET Forecast */}
+        <section className="mb-10">
+          <AemetForecast forecast={aemetForecast} municipio={forecastMunicipio} />
+        </section>
+
+        {/* Controls - Fecha, Exportar, Observaciones */}
         <section className="mb-10">
           <div className="flex flex-col md:flex-row md:items-center gap-4">
             <Popover>
@@ -831,16 +841,6 @@ function App() {
               {historyData.length} observaciones
             </div>
           </div>
-        </section>
-
-        {/* AEMET Alerts */}
-        <section className="mb-10">
-          <AemetAlerts alerts={aemetAlerts} lastUpdate={lastAemetUpdate} />
-        </section>
-
-        {/* AEMET Forecast */}
-        <section className="mb-10">
-          <AemetForecast forecast={aemetForecast} municipio={forecastMunicipio} />
         </section>
 
         {/* Statistics Summary / Resumen del Día */}
