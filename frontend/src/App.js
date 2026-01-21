@@ -660,11 +660,25 @@ function App() {
           </div>
         </section>
 
-        {/* Statistics Summary */}
+        {/* AEMET Alerts */}
+        <section className="mb-10">
+          <AemetAlerts alerts={aemetAlerts} />
+        </section>
+
+        {/* AEMET Forecast */}
+        <section className="mb-10">
+          <AemetForecast forecast={aemetForecast} municipio={forecastMunicipio} />
+        </section>
+
+        {/* Statistics Summary / Resumen del Día */}
         {statistics && <section className="mb-10"><StatsSummary stats={statistics} /></section>}
 
         {/* Charts Section */}
         <section className="mb-10">
+          <h2 className="heading text-base mb-5 text-slate-400 flex items-center gap-2">
+            <span className="w-1 h-4 bg-violet-500 rounded-full"></span>
+            Gráficos Históricos
+          </h2>
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="bg-white/5 border border-white/5 rounded-xl p-1.5 mb-6 flex-wrap h-auto gap-1">
               <TabsTrigger
