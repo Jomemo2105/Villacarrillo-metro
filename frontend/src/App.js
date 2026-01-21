@@ -138,24 +138,24 @@ const StatsSummary = ({ stats }) => {
         <div className="p-2 bg-emerald-500/10 rounded-lg border border-emerald-500/20">
           <Activity className="w-5 h-5 text-emerald-400" />
         </div>
-        Resumen Estadístico
+        Resumen del Día
       </h3>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
         <div className="space-y-1">
           <div className="metric-label">Temp Máx</div>
-          <div className="metric-value text-2xl text-rose-400">{stats.temp_max_c?.toFixed(1) ?? "—"}°C</div>
+          <div className="metric-value text-2xl text-rose-400">{stats.temp_max_c ?? "—"}°C</div>
         </div>
         <div className="space-y-1">
           <div className="metric-label">Temp Mín</div>
-          <div className="metric-value text-2xl text-blue-400">{stats.temp_min_c?.toFixed(1) ?? "—"}°C</div>
+          <div className="metric-value text-2xl text-blue-400">{stats.temp_min_c ?? "—"}°C</div>
         </div>
         <div className="space-y-1">
           <div className="metric-label">Humedad Media</div>
-          <div className="metric-value text-2xl text-cyan-400">{stats.humidity_avg?.toFixed(1) ?? "—"}%</div>
+          <div className="metric-value text-2xl text-cyan-400">{stats.humidity_avg?.toFixed(0) ?? "—"}%</div>
         </div>
         <div className="space-y-1">
           <div className="metric-label">Ráfaga Máx</div>
-          <div className="metric-value text-2xl text-orange-400">{stats.wind_gust_max_kph?.toFixed(1) ?? "—"} km/h</div>
+          <div className="metric-value text-2xl text-orange-400">{stats.wind_gust_max_kph ?? "—"} km/h</div>
         </div>
         <div className="space-y-1">
           <div className="metric-label">Viento Medio</div>
@@ -167,12 +167,140 @@ const StatsSummary = ({ stats }) => {
         </div>
         <div className="space-y-1">
           <div className="metric-label">Precipitación</div>
-          <div className="metric-value text-2xl text-blue-300">{stats.precip_total_mm?.toFixed(1) ?? 0} mm</div>
+          <div className="metric-value text-2xl text-blue-300">{stats.precip_total_mm ?? 0} mm</div>
         </div>
         <div className="space-y-1">
           <div className="metric-label">Observaciones</div>
           <div className="metric-value text-2xl text-white">{stats.observation_count ?? 0}</div>
         </div>
+      </div>
+    </div>
+  );
+};
+
+// AEMET Alerts Component
+const AemetAlerts = ({ alerts }) => {
+  if (!alerts || alerts.length === 0) {
+    return (
+      <div className="glass-card p-6" data-testid="aemet-alerts">
+        <h3 className="heading text-lg mb-4 flex items-center gap-3">
+          <div className="p-2 bg-emerald-500/10 rounded-lg border border-emerald-500/20">
+            <AlertTriangle className="w-5 h-5 text-emerald-400" />
+          </div>
+          Alertas AEMET
+        </h3>
+        <div className="flex items-center gap-3 text-slate-400">
+          <span className="w-2 h-2 bg-emerald-500 rounded-full"></span>
+          No hay alertas activas para la zona
+        </div>
+      </div>
+    );
+  }
+
+  const getSeverityColor = (severity) => {
+    switch (severity?.toLowerCase()) {
+      case "extreme": return "bg-red-500/20 border-red-500/30 text-red-400";
+      case "severe": return "bg-orange-500/20 border-orange-500/30 text-orange-400";
+      case "moderate": return "bg-yellow-500/20 border-yellow-500/30 text-yellow-400";
+      default: return "bg-blue-500/20 border-blue-500/30 text-blue-400";
+    }
+  };
+
+  return (
+    <div className="glass-card p-6" data-testid="aemet-alerts">
+      <h3 className="heading text-lg mb-4 flex items-center gap-3">
+        <div className="p-2 bg-amber-500/10 rounded-lg border border-amber-500/20">
+          <AlertTriangle className="w-5 h-5 text-amber-400" />
+        </div>
+        Alertas AEMET
+      </h3>
+      <div className="space-y-3">
+        {alerts.map((alert, index) => (
+          <div key={index} className={`p-4 rounded-lg border ${getSeverityColor(alert.severity)}`}>
+            <div className="font-medium mb-1">{alert.event || alert.headline}</div>
+            {alert.description && (
+              <div className="text-sm opacity-80">{alert.description}</div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// Weather icon helper
+const getWeatherIcon = (cielo) => {
+  if (!cielo) return <Cloud className="w-8 h-8" />;
+  const lower = cielo.toLowerCase();
+  if (lower.includes("nieve")) return <CloudSnow className="w-8 h-8 text-blue-300" />;
+  if (lower.includes("lluvia")) return <CloudRain className="w-8 h-8 text-blue-400" />;
+  if (lower.includes("cubierto")) return <Cloudy className="w-8 h-8 text-slate-400" />;
+  if (lower.includes("nuboso")) return <Cloud className="w-8 h-8 text-slate-300" />;
+  if (lower.includes("despejado")) return <Sun className="w-8 h-8 text-yellow-400" />;
+  return <CloudSun className="w-8 h-8 text-slate-300" />;
+};
+
+// AEMET Forecast Component
+const AemetForecast = ({ forecast, municipio }) => {
+  if (!forecast || forecast.length === 0) {
+    return (
+      <div className="glass-card p-6" data-testid="aemet-forecast">
+        <h3 className="heading text-lg mb-4 flex items-center gap-3">
+          <div className="p-2 bg-blue-500/10 rounded-lg border border-blue-500/20">
+            <MapPin className="w-5 h-5 text-blue-400" />
+          </div>
+          Pronóstico AEMET
+        </h3>
+        <div className="text-slate-400">Cargando pronóstico...</div>
+      </div>
+    );
+  }
+
+  const getDayName = (dateStr) => {
+    const date = new Date(dateStr);
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    
+    if (date.toDateString() === today.toDateString()) return "Hoy";
+    if (date.toDateString() === tomorrow.toDateString()) return "Mañana";
+    return format(date, "EEEE", { locale: es });
+  };
+
+  return (
+    <div className="glass-card p-6" data-testid="aemet-forecast">
+      <h3 className="heading text-lg mb-4 flex items-center gap-3">
+        <div className="p-2 bg-blue-500/10 rounded-lg border border-blue-500/20">
+          <MapPin className="w-5 h-5 text-blue-400" />
+        </div>
+        Pronóstico {municipio || "Villacarrillo"}
+        <span className="text-xs text-slate-500 font-normal ml-auto">AEMET</span>
+      </h3>
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+        {forecast.map((day, index) => (
+          <div key={index} className="bg-white/5 rounded-xl p-4 text-center border border-white/5 hover:border-white/10 transition-colors">
+            <div className="text-sm text-slate-400 mb-2 capitalize">{getDayName(day.fecha)}</div>
+            <div className="flex justify-center mb-2">
+              {getWeatherIcon(day.cielo)}
+            </div>
+            <div className="text-xs text-slate-500 mb-3 h-8 line-clamp-2">{day.cielo || "—"}</div>
+            <div className="flex justify-center gap-3 text-lg font-medium">
+              <span className="text-rose-400">{day.temp_max}°</span>
+              <span className="text-blue-400">{day.temp_min}°</span>
+            </div>
+            {day.prob_precipitacion > 0 && (
+              <div className="mt-2 text-xs text-blue-400 flex items-center justify-center gap-1">
+                <CloudRain className="w-3 h-3" />
+                {day.prob_precipitacion}%
+              </div>
+            )}
+            {day.viento_velocidad && (
+              <div className="mt-1 text-xs text-slate-500">
+                {day.viento_direccion} {day.viento_velocidad} km/h
+              </div>
+            )}
+          </div>
+        ))}
       </div>
     </div>
   );
