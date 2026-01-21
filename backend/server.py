@@ -582,7 +582,15 @@ async def fetch_aemet_data(endpoint: str) -> Optional[Dict[str, Any]]:
             data_url = data["datos"]
             data_response = await http_client.get(data_url, timeout=15.0)
             data_response.raise_for_status()
-            return data_response.json()
+            
+            # Handle encoding issues
+            try:
+                return data_response.json()
+            except:
+                # Try with latin-1 encoding
+                content = data_response.content.decode('latin-1')
+                import json
+                return json.loads(content)
             
         except httpx.HTTPError as e:
             logger.error(f"Error fetching AEMET data: {e}")
