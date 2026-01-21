@@ -378,7 +378,7 @@ function App() {
             <MetricCard
               icon={Thermometer}
               label="Temperatura"
-              value={currentWeather?.temp_c?.toFixed(1)}
+              value={currentWeather?.temp_c}
               unit="°C"
               color="orange"
               large={false}
@@ -393,14 +393,14 @@ function App() {
             <MetricCard
               icon={Wind}
               label="Viento"
-              value={currentWeather?.wind_speed_kph?.toFixed(1)}
+              value={currentWeather?.wind_speed_kph}
               unit="km/h"
               color="green"
             />
             <MetricCard
               icon={Navigation}
               label="Ráfaga"
-              value={currentWeather?.wind_gust_kph?.toFixed(1)}
+              value={currentWeather?.wind_gust_kph}
               unit="km/h"
               color="orange"
             />
@@ -425,7 +425,7 @@ function App() {
             <MetricCard
               icon={Thermometer}
               label="Punto de Rocío"
-              value={currentWeather?.dewpoint_c?.toFixed(1)}
+              value={currentWeather?.dewpoint_c}
               unit="°C"
               color="cyan"
             />
@@ -439,7 +439,7 @@ function App() {
             <MetricCard
               icon={Sun}
               label="Índice UV"
-              value={currentWeather?.uv?.toFixed(1)}
+              value={currentWeather?.uv}
               unit=""
               color="yellow"
             />
