@@ -18,7 +18,13 @@ import {
   Navigation,
   TrendingUp,
   TrendingDown,
-  Clock
+  Clock,
+  AlertTriangle,
+  CloudSnow,
+  Cloud,
+  CloudSun,
+  Cloudy,
+  MapPin
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
