@@ -393,25 +393,26 @@ function App() {
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
-      await Promise.all([fetchCurrentWeather(), fetchHistory()]);
+      await Promise.all([fetchCurrentWeather(), fetchHistory(), fetchAemetData()]);
       setLoading(false);
     };
     loadData();
-  }, [fetchCurrentWeather, fetchHistory]);
+  }, [fetchCurrentWeather, fetchHistory, fetchAemetData]);
 
   // Auto-refresh
   useEffect(() => {
     const interval = setInterval(() => {
       fetchCurrentWeather();
+      fetchAemetData();
     }, REFRESH_INTERVAL);
 
     return () => clearInterval(interval);
-  }, [fetchCurrentWeather]);
+  }, [fetchCurrentWeather, fetchAemetData]);
 
   // Refresh handler
   const handleRefresh = async () => {
     setRefreshing(true);
-    await Promise.all([fetchCurrentWeather(), fetchHistory()]);
+    await Promise.all([fetchCurrentWeather(), fetchHistory(), fetchAemetData()]);
     setRefreshing(false);
     toast.success("Datos actualizados");
   };
