@@ -372,13 +372,25 @@ async def get_last_24_hours():
         today = now.strftime("%Y%m%d")
         data = await fetch_history_from_wu(today)
         if data and "observations" in data:
+            # Batch check for existing IDs to avoid N+1 queries
+            new_obs = []
             for obs in data["observations"]:
                 weather = parse_wu_observation(obs)
                 doc = weather.model_dump()
                 doc['timestamp'] = doc['timestamp'].isoformat()
-                # Check if already exists
-                exists = await db.observations.find_one({"id": doc["id"]})
-                if not exists:
+                new_obs.append(doc)
+            
+            # Get all IDs that already exist in one query
+            new_ids = [doc["id"] for doc in new_obs]
+            existing_docs = await db.observations.find(
+                {"id": {"$in": new_ids}},
+                {"id": 1, "_id": 0}
+            ).to_list(None)
+            existing_ids = {doc["id"] for doc in existing_docs}
+            
+            # Insert only new observations
+            for doc in new_obs:
+                if doc["id"] not in existing_ids:
                     await db.observations.insert_one(doc)
                     observations.append(doc)
     
